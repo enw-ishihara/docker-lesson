@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  lesson-apache:
+    container_name: lesson-apache
+    image: httpd:2.4
+    depends_on:
+      - lesson-mysql
+    restart: always
+    volumes:
+      - /var/opt/docker/lesson-apache/htdocs:/usr/local/apache2/htdocs/
+    networks:
+      - lesson-lan
+    ports:
+      - 80:80
+
+  lesson-mysql:
+    container_name: lesson-mysql
+    image: mysql:8.0
+    restart: always
+    volumes:
+      - /var/opt/docker/lesson-mysql/mysql:/var/lib/mysql
+    networks:
+      - lesson-lan
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+
+  lesson-phpmyadmin:
+    container_name: lesson-phpmyadmin
+    image: phpmyadmin:5.1
+    depends_on:
+      - lesson-mysql
+    restart: always
+    networks:
+      - lesson-lan
+    ports:
+      - 8000:80
+    environment:
+      - PMA_ARBITRARY=1
+
+networks:
+  lesson-lan:
+    external: true
